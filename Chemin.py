@@ -28,6 +28,8 @@ class Chemin:
 
         return matrice
 
+
+
     def __str__(self):
         noms_villes = [str(ville) for ville in self.villes]
         return ' -> '.join(noms_villes) + f' -> {self.villes[0]}'  # Pour former une boucle

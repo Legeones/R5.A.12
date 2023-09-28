@@ -59,8 +59,11 @@ class Echantillon:
         """
         Crée un chemin aléatoire qui visite toutes les villes une fois.
         """
-        villes_non_visitees = list(self.villes)
+        echan = list(self.villes)
+        ville_depart = echan.pop(0)
+        villes_non_visitees = echan
         random.shuffle(villes_non_visitees)
+        villes_non_visitees.insert(0, ville_depart)
         chemin_aleatoire = Chemin(villes_non_visitees)
         return chemin_aleatoire
 
