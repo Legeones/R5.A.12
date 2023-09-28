@@ -10,8 +10,11 @@ class Echantillon:
         self.chemins = []
         self.villes = []
 
-    def creer_echantillion(self, nb_villes, nb_population):
-        self.generer_villes_aleatoires(nb_villes, 0, nb_villes, 0, nb_villes)
+    def creer_echantillion(self, nb_villes=None, nb_population=None, villes=None):
+        if villes is None:
+            self.generer_villes_aleatoires(nb_villes, 0, nb_villes, 0, nb_villes)
+        else:
+            self.villes = villes
         for i in range(nb_population):
             self.ajouter_chemin(self.creer_chemin_aleatoire())
 
@@ -30,7 +33,8 @@ class Echantillon:
         limitées par x_min, x_max, y_min et y_max.
         """
         while len(self.villes) < nombre_de_villes:
-            nom_ville = ''.join(random.choice(string.ascii_uppercase) for _ in range(3))  # Génère un nom aléatoire de 3 caractères
+            nom_ville = ''.join(
+                random.choice(string.ascii_uppercase) for _ in range(3))  # Génère un nom aléatoire de 3 caractères
             x = random.uniform(x_min, x_max)
             y = random.uniform(y_min, y_max)
             nouvelle_ville = Ville(nom_ville, x, y)
@@ -68,4 +72,5 @@ class Echantillon:
         return chemin_aleatoire
 
     def __str__(self):
-        return "\n".join([f"Chemin {i}: {chemin} (Longueur: {chemin.longueur()})" for i, chemin in enumerate(self.chemins)])
+        return "\n".join(
+            [f"Chemin {i}: {chemin} (Longueur: {chemin.longueur()})" for i, chemin in enumerate(self.chemins)])

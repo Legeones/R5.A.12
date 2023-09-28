@@ -1,14 +1,52 @@
+import itertools
+import sys
 import time
+
+import enlighten
+from tqdm import tqdm
 
 from Chemin import Chemin
 from Echantillion import Echantillon
 import random
 
 
+def exhaustive_search(ensemble_villes, identifiant, manager):
+    t1 = time.time()
+    meilleur_chemin = None
+    meilleure_longueur = float('inf')  # Initialisation à une valeur infinie
+
+    n = len(ensemble_villes)
+    indices = list(range(n))
+    permutations = []
+
+    total_permutations = 1
+    for i in range(1, n + 1):
+        total_permutations *= i
+    # Génération de toutes les permutations possibles des villes
+    permutations = list(tqdm(itertools.permutations(ensemble_villes), desc="Permutations", unit=" permutation", total=total_permutations))
+    with manager.counter(total=len(permutations), unit='iterations', color='green',
+                         desc=f'Thread-{identifiant}') as progress:
+        for permutation in permutations:
+            chemin = Chemin(list(permutation))  # Création d'un chemin avec la permutation
+            longueur = chemin.longueur()  # Calcul de la longueur du chemin
+            progress.update()
+            # Mise à jour du meilleur chemin si nécessaire
+            if longueur < meilleure_longueur:
+                meilleure_longueur = longueur
+                meilleur_chemin = chemin
+        progress.close()
+    temps_ecoule = time.time() - t1
+    print(f"Temps : {temps_ecoule}, distance {meilleure_longueur}")
+    return meilleur_chemin, meilleure_longueur
+
+
 class AlgorithmesGenetiques:
-    def __init__(self, nb_villes, nb_population):
+    def __init__(self, nb_villes=None, nb_population=None, villes=None):
         self.echantillion = Echantillon()
-        self.echantillion.creer_echantillion(nb_villes, nb_population)
+        if villes is not None:
+            self.echantillion.creer_echantillion(nb_villes, nb_population, villes)
+        else:
+            self.echantillion.creer_echantillion(nb_villes, nb_population, None)
 
     def selection_par_roulette(self, nombre_selectionnes):
         # Calculez la somme totale des valeurs de fitness des chemins
@@ -65,7 +103,7 @@ class AlgorithmesGenetiques:
     def effectuer_mutation(self, taux):
         for chemin in self.echantillion.chemins:
             if random.random() < taux:
-                print("Mutation")
+                # print("Mutation")
                 nb_villes = len(chemin.villes)
                 index1, index2 = 0, 0
                 while index1 == 0 or index2 == 0:
@@ -85,14 +123,19 @@ class AlgorithmesGenetiques:
             distances[chemin] = chemin.longueur()
         return distances
 
-    def lancer(self, nb_selection, nb_fusion, nb_iterations):
+    def lancer(self, nb_selection, nb_fusion, nb_iterations, affichage=False):
         t1 = time.time()
         distances = self.liste_distance_chemins()
         actuel_min = min(distances, key=distances.get)
         min_total = actuel_min
         min_list = [min_total.longueur()]
-        print(f"Minimum actuel {min_total}.")
+        if affichage:
+            print(f"Minimum actuel {min_total}.")
         for i in range(nb_iterations):
+            pourcentage = i / nb_iterations * 100
+            barre = "#" * int(pourcentage / 2)
+            sys.stdout.write("\r[%-50s] %d%%" % (barre, pourcentage))
+            sys.stdout.flush()
             self.selection_par_roulette(nb_selection)
             self.effectuer_fusion(nb_fusion)
             self.effectuer_mutation(0.005)
@@ -101,10 +144,11 @@ class AlgorithmesGenetiques:
             min_total = actuel_min if actuel_min.longueur() < min_total.longueur() else min_total
             if min_list[-1] != min_total.longueur():
                 min_list.append(min_total.longueur())
-            print(f"Minimum actuel {min_total.longueur()}.")
-            print(f"Longueur moyenne {i} : ")
-            print(actuel_min.longueur())
-            print("\n")
+            if affichage:
+                print(f"Minimum actuel {min_total.longueur()}.")
+                print(f"Longueur moyenne {i} : ")
+                print(actuel_min.longueur())
+                print("\n")
         temps_ecoule = time.time() - t1
         print(f"Temps écoulé : {temps_ecoule} secondes")
         print(f"Chemin minimum obtenu : longueur {min_total.longueur()}, {min_total}")
