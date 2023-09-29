@@ -51,18 +51,19 @@ class AlgorithmesGenetiques:
     def selection_par_roulette(self, nombre_selectionnes):
         # Calculez la somme totale des valeurs de fitness des chemins
         somme_fitness = sum(1 / chemin.longueur() for chemin in self.echantillion.chemins)
-
         # Sélectionnez des chemins proportionnellement à leur fitness
         chemins_selectionnes = Echantillon()
         for _ in range(nombre_selectionnes):
+            # Séléction aléatoire d'une somme_fitness_temporaire à l'instant t
             choix = random.uniform(0, somme_fitness)
             somme_partielle = 0
             for chemin in self.echantillion.chemins:
+                # Valeur fitness du chemin en cours
                 somme_partielle += 1 / chemin.longueur()
+                # Si le chemin est meilleur que le choix on le prend
                 if somme_partielle >= choix:
                     chemins_selectionnes.ajouter_chemin(chemin)
                     break
-
         self.echantillion = chemins_selectionnes
 
     def fusionner_chemins(self, parents):

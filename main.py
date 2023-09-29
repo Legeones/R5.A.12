@@ -20,14 +20,15 @@ if __name__ == '__main__':
     echan.generer_villes_aleatoires(nb_villes, 0, 50, 0, 50)
     villes = echan.villes
     manager = enlighten.Manager()
-    algoGen1 = AlgorithmesGenetiques(nb_villes, 200, villes)
-    if nb_villes <= 10:
+    popGen1 = pow(nb_villes, 2)
+    algoGen1 = AlgorithmesGenetiques(nb_villes, popGen1, villes)
+    if nb_villes <= 12:
         algo3 = threading.Thread(target=exhaustive_search, args=(villes, 3, manager))
     else:
         algo3 = None
     algoGen2 = AlgorithmesGenetiques(nb_villes, 100, villes)
     # algo.lancer(100, 100, 400)
-    algo1 = LauncherThread(1, algoGen1, 100, 100, 300, manager)
+    algo1 = LauncherThread(1, algoGen1, popGen1//10, popGen1//10, 100, manager)
     algo2 = LauncherThread(2, algoGen2, 50, 50, 900, manager)
     algo1.start()
     algo2.start()
