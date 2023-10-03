@@ -17,6 +17,8 @@ parcours = [[1, 2, 3, 4, 5, 6], [6, 5, 4, 3, 2, 1]]
 if __name__ == '__main__':
     echan = Echantillon()
     nb_villes = 10
+    pm = [0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    pc = [0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
     echan.generer_villes_aleatoires(nb_villes, 0, 50, 0, 50)
     villes = echan.villes
     manager = enlighten.Manager()
