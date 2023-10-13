@@ -1,6 +1,6 @@
 import random
 import string
-
+import matplotlib.pyplot as plt
 from Chemin import Chemin
 from Ville import Ville
 
@@ -8,13 +8,50 @@ from Ville import Ville
 class Echantillon:
     def __init__(self):
         self.chemins = []
+        self.taille_pop_origin = 0
         self.villes = []
+
+    def affichageVilles(self, tracer=None):
+        # Tracez les villes sur le graphique
+        plt.figure(figsize=(15, 15))
+        x_coords = [ville.x for ville in self.villes]
+        y_coords = [ville.y for ville in self.villes]
+        plt.scatter(x_coords, y_coords, color='red', label='Villes')
+
+        # Tracez les lignes entre les villes pour représenter le chemin
+        for i in range(len(self.villes)):
+            for y in range(len(self.villes)):
+                if i != y:
+                    plt.plot([self.villes[i].x, self.villes[y].x], [self.villes[i].y, self.villes[y].y],
+                             color='gray', linestyle='dotted')
+
+        if tracer is not None:
+            i = Ville
+            y = Ville
+            for i in range(len(tracer) - 1):
+                plt.plot([tracer[i].x, tracer[i + 1].x], [tracer[i].y, tracer[i + 1].y],
+                         color='green')
+            plt.plot([tracer[-1].x, tracer[0].x], [tracer[-1].y, tracer[0].y], color='green')
+
+        # Ajoutez les noms des villes à côté de leurs points sur le graphique
+        for i, ville in enumerate(self.villes):
+            plt.text(ville.x, ville.y, ville.nom, fontsize=12, ha='right')
+
+        # Affichez la légende et le titre du graphique
+        plt.legend()
+        plt.title('Représentation graphique des villes avec le chemin')
+        plt.xlabel('Coordonnée X')
+        plt.ylabel('Coordonnée Y')
+
+        # Affichez le graphique
+        plt.show()
 
     def creer_echantillion(self, nb_villes=None, nb_population=None, villes=None):
         if villes is None:
-            self.generer_villes_aleatoires(nb_villes, 0, nb_villes, 0, nb_villes)
+            self.generer_villes_aleatoires(nb_villes, 0, nb_villes+10, 0, nb_villes+10)
         else:
             self.villes = villes
+        self.taille_pop_origin = nb_population
         for i in range(nb_population):
             self.ajouter_chemin(self.creer_chemin_aleatoire())
 

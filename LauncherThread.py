@@ -2,6 +2,7 @@ import threading
 import itertools
 import sys
 import time
+import AlgorithmeGenetique
 
 import enlighten
 
@@ -46,11 +47,10 @@ class LauncherThread(threading.Thread):
                 distances = self.algo.liste_distance_chemins()
                 actuel_min = min(distances, key=distances.get)
                 min_total = actuel_min if actuel_min.longueur() < min_total.longueur() else min_total
-                if min_list[-1] != min_total.longueur():
-                    min_list.append(min_total.longueur())
+                min_list.append(min_total.longueur())
                 progress.update()
 
             temps_ecoule = time.time() - t1
+            AlgorithmeGenetique.graphLongueurs(min_list)
             print(f"Temps écoulé pour Thread-{self.identifiant}: {temps_ecoule:.2f} secondes")
             print(f"Chemin minimum obtenu pour Thread-{self.identifiant}: longueur {min_total.longueur()}, {min_total}")
-            print(min_list)

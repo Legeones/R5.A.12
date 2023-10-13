@@ -1,3 +1,4 @@
+
 class Chemin:
     def __init__(self, villes):
         self.villes = villes  # Une liste d'objets Ville
